@@ -1,0 +1,10 @@
+{
+    "lm_studio_url": "http://localhost:1234/v1",
+    "model_name": "dolphin3.0-llama3.2-3b",
+    "fast_model_name": "",
+    "cloud_model_name": "",
+    "enable_dbus_monitor": true,
+    "enable_tts": true,
+    "llm_backend": "inbuilt",
+    "inbuilt_model_id": "Qwen/Qwen2.5-1.5B-Instruct"
+}
