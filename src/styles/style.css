@@ -1,0 +1,654 @@
+/* ===========================================================================
+   GnomeAI GTK4 Premium Developer Theme (Goose Style V2)
+   Sleek Charcoal Slate, Flat Cards, High Utility & Sharp Contrast
+   =========================================================================== */
+
+/* --- HSL-Curated Developer Color Palette --- */
+@define-color accent_color #818cf8;       /* Electric Indigo */
+@define-color accent_hover #6366f1;      /* Darker Indigo */
+@define-color accent_bg rgba(99, 102, 241, 0.08);
+@define-color accent_border rgba(255, 255, 255, 0.08);
+
+@define-color success_color #10b981;      /* Emerald Green */
+@define-color success_bg rgba(16, 185, 129, 0.08);
+@define-color error_color #ef4444;        /* Rose Red */
+@define-color error_bg rgba(239, 68, 68, 0.08);
+@define-color warning_color #f59e0b;      /* Amber Yellow */
+@define-color warning_bg rgba(245, 158, 11, 0.05);
+
+@define-color bg_base #151619;            /* Goose Main Background */
+@define-color bg_sidebar #0f1013;         /* Goose Sidebar Background */
+@define-color bg_card #1c1d22;            /* Goose Input/Bubble Background */
+@define-color bg_code #0b0c0f;
+@define-color bg_console #050608;
+@define-color bg_editor #1c1d22;
+
+@define-color text_primary #f9fafb;       /* Pure Cool White */
+@define-color text_secondary #9ca3af;     /* Medium Gray */
+@define-color text_dim #6b7280;           /* Dark Slate Gray */
+@define-color text_console #d1d5db;
+
+@define-color border_subtle rgba(255, 255, 255, 0.05);
+@define-color border_hover rgba(255, 255, 255, 0.1);
+@define-color border_focus rgba(99, 102, 241, 0.35);
+@define-color card_hover rgba(255, 255, 255, 0.02);
+
+/* --- Base Window --- */
+window {
+    background-color: @bg_base;
+    color: @text_primary;
+    font-family: "JetBrains Mono", "Fira Code", "Inter", "sans-serif";
+}
+
+/* --- Sidebar --- */
+.sidebar {
+    background-color: @bg_sidebar;
+    border-right: 1px solid @border_subtle;
+}
+
+.sidebar-recents-header {
+    font-size: 13.5px;
+    font-weight: 700;
+    color: #ffffff !important;
+    font-family: "Inter", "system-ui", "sans-serif";
+}
+
+/* ===========================================================================
+   Chat Session Cards (Sidebar History)
+   =========================================================================== */
+listboxrow {
+    background-color: transparent !important;
+    border-radius: 6px;
+    margin: 2px 8px;
+    padding: 0;
+}
+
+listboxrow:selected,
+listboxrow:selected:focus,
+listboxrow:selected:hover,
+listboxrow:selected:active {
+    background-color: transparent !important;
+    background: transparent !important;
+    outline: none !important;
+    box-shadow: none !important;
+    border: none !important;
+}
+
+.chat-session-card {
+    padding: 8px 12px;
+    border-radius: 6px;
+    background-color: transparent;
+    border: 1px solid transparent;
+    transition: all 150ms ease;
+}
+
+.chat-session-card:hover {
+    background-color: rgba(255, 255, 255, 0.04);
+}
+
+listboxrow:selected .chat-session-card {
+    background-color: rgba(255, 255, 255, 0.08) !important;
+    border-color: transparent !important;
+}
+
+.chat-session-title {
+    font-family: "Inter", "system-ui", "sans-serif";
+    font-weight: 500;
+    font-size: 13.5px;
+    color: #d1d5db;
+}
+
+listboxrow:selected .chat-session-title {
+    color: #ffffff !important;
+    font-weight: 500;
+}
+
+.chat-session-card button.flat {
+    background: none;
+    border: none;
+    box-shadow: none;
+    opacity: 0.3;
+    color: #ffffff;
+    font-size: 14px;
+    padding: 0 4px;
+    transition: all 150ms ease;
+}
+
+.chat-session-card:hover button.flat {
+    opacity: 0.7;
+}
+
+.chat-session-card button.flat:hover {
+    opacity: 1.0;
+    color: @error_color;
+    background-color: @error_bg;
+}
+
+/* ===========================================================================
+   Message Bubbles (Flat Modern Cards)
+   =========================================================================== */
+.msg-bubble-user {
+    background-color: @bg_card;
+    color: @text_primary;
+    border: 1px solid @accent_border;
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin: 6px 12px;
+}
+
+.msg-bubble-assistant {
+    background-color: @bg_card;
+    border: 1px solid @border_subtle;
+    color: @text_primary;
+    border-radius: 8px;
+    padding: 16px;
+    margin: 6px 12px;
+}
+
+.msg-bubble-system {
+    background-color: @warning_bg;
+    border: 1px solid alpha(@warning_color, 0.1);
+    color: @warning_color;
+    border-radius: 6px;
+    padding: 12px 14px;
+    margin: 6px 12px;
+}
+
+/* ===========================================================================
+   Code blocks and Collapsible Expander Styling
+   =========================================================================== */
+expander {
+    border: 1px solid @border_subtle;
+    background-color: @bg_code;
+    border-radius: 6px;
+    padding: 6px 10px;
+    margin-bottom: 6px;
+}
+
+expander:hover {
+    background-color: rgba(255, 255, 255, 0.02);
+}
+
+.code-block-view {
+    font-family: "Fira Code", "JetBrains Mono", monospace;
+    background-color: @bg_code;
+    border: 1px solid @border_subtle;
+    border-radius: 4px;
+    color: @text_primary;
+    font-size: 12.5px;
+    padding: 12px;
+}
+
+.console-logs-view {
+    font-family: "Fira Code", "JetBrains Mono", monospace;
+    background-color: @bg_console;
+    border-radius: 4px;
+    color: @text_console;
+    font-size: 11.5px;
+    padding: 8px;
+}
+
+/* ===========================================================================
+   Sidebar Navigation Buttons
+   =========================================================================== */
+button.sidebar-nav-button {
+    background: none !important;
+    background-color: transparent !important;
+    border: 1px solid transparent !important;
+    border-radius: 6px !important;
+    padding: 10px 14px !important;
+    color: #9ca3af !important;
+    font-weight: 500;
+    font-size: 13.5px;
+    margin-bottom: 4px;
+    box-shadow: none !important;
+    transition: all 150ms ease;
+}
+
+button.sidebar-nav-button:hover {
+    background-color: rgba(255, 255, 255, 0.04) !important;
+    color: #f9fafb !important;
+}
+
+button.sidebar-nav-button.active {
+    background-color: rgba(129, 140, 248, 0.1) !important;
+    border-color: rgba(129, 140, 248, 0.2) !important;
+    color: #818cf8 !important;
+    font-weight: 600;
+}
+
+/* ===========================================================================
+   New Chat Gradient Button
+   =========================================================================== */
+button.btn-new-chat {
+    background: linear-gradient(135deg, #3584e4, #ab55b3) !important;
+    color: #ffffff !important;
+    border: none !important;
+    border-radius: 8px !important;
+    padding: 10px 16px !important;
+    font-weight: 600 !important;
+    box-shadow: 0 4px 10px rgba(53, 132, 228, 0.15) !important;
+    transition: all 200ms ease;
+}
+
+button.btn-new-chat:hover {
+    box-shadow: 0 6px 14px rgba(53, 132, 228, 0.25) !important;
+    filter: brightness(1.15);
+}
+
+/* ===========================================================================
+   Workflow Recipe Card Styling
+   =========================================================================== */
+.skill-vault-card {
+    padding: 12px 16px;
+    background-color: @bg_card;
+    border: 1px solid @border_subtle;
+    border-radius: 8px;
+    margin: 4px;
+    transition: all 150ms ease;
+}
+
+.skill-vault-card:hover {
+    background-color: rgba(255, 255, 255, 0.02);
+    border-color: @border_hover;
+}
+
+.skill-vault-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: white;
+}
+
+.skill-vault-desc {
+    font-size: 11.5px;
+    color: @text_secondary;
+}
+
+/* ===========================================================================
+   Welcome Suggested Prompts (Pills)
+   =========================================================================== */
+.pill {
+    border-radius: 6px;
+    padding: 6px 14px;
+    background-color: @bg_card;
+    border: 1px solid @border_subtle;
+    color: @text_secondary;
+    font-size: 12.5px;
+    transition: all 150ms ease;
+}
+
+.pill:hover {
+    background-color: @accent_bg;
+    border-color: @accent_border;
+    color: @text_primary;
+}
+
+/* ===========================================================================
+   Welcome Clock
+   =========================================================================== */
+.welcome-clock {
+    font-size: 64px;
+    font-weight: 300;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+}
+
+/* ===========================================================================
+   Toast Notification (Floating Overlay)
+   =========================================================================== */
+.toast-notification {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: 20px;
+    padding: 8px 18px;
+    color: var(--text-primary);
+    font-size: 13px;
+}
+
+/* ===========================================================================
+   Chat Input Card & Active Model Tag (Goose-style)
+   =========================================================================== */
+.chat-input-card {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: 12px;
+    padding: 8px;
+}
+
+.chat-input-card textview {
+    background-color: transparent;
+    border: none;
+    padding: 4px;
+    color: #ffffff;
+}
+
+.active-model-tag {
+    font-size: 11px;
+    color: #a0a0a0;
+    font-weight: 500;
+    padding: 2px 8px;
+    background-color: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+}
+
+.send-button {
+    background-color: #3584e4;
+    color: #ffffff;
+    border-radius: 50%;
+    min-width: 32px;
+    min-height: 32px;
+    padding: 0;
+    font-weight: bold;
+}
+
+.send-button:hover {
+    background-color: #1c71d8;
+}
+
+/* ===========================================================================
+   Segmented Mode Selector Pill
+   =========================================================================== */
+.mode-selector-pill {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: 20px;
+    padding: 3px;
+}
+
+.mode-btn {
+    font-size: 11.5px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    padding: 4px 14px;
+    border-radius: 17px;
+    transition: all 200ms ease;
+}
+
+:root[data-theme="dark"] .mode-btn {
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.mode-btn:hover {
+    color: var(--text-primary);
+    background-color: var(--border-subtle);
+}
+
+:root[data-theme="dark"] .mode-btn:hover {
+    color: #ffffff;
+    background-color: rgba(255, 255, 255, 0.04);
+}
+
+.mode-btn.active {
+    color: #ffffff !important;
+    background-color: #ab55b3 !important;
+    box-shadow: 0 2px 6px rgba(171, 85, 179, 0.3) !important;
+}
+
+/* ===========================================================================
+   LM Studio Style Model Loader Pill & Right Parameter Panel
+   =========================================================================== */
+.model-loader-pill {
+    background-color: var(--bg-card) !important;
+    border: 1px solid var(--border-subtle) !important;
+    border-radius: 16px !important;
+    padding: 4px 14px !important;
+    color: var(--text-primary) !important;
+    font-size: 11.5px !important;
+    font-weight: 500 !important;
+    box-shadow: none !important;
+    transition: all 150ms ease;
+}
+
+.model-loader-pill:hover {
+    background-color: var(--accent-bg) !important;
+    border-color: var(--accent) !important;
+}
+
+.right-parameter-sidebar {
+    background-color: #0f1013;
+    border-left: 1px solid rgba(255, 255, 255, 0.05);
+    padding: 12px;
+}
+
+.right-sidebar-title {
+    color: #ffffff;
+    font-weight: bold;
+    margin-bottom: 8px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+expander {
+    margin-bottom: 10px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    padding-bottom: 8px;
+}
+
+expander > title {
+    font-weight: 700;
+    font-size: 11.5px;
+    color: #a0a0a0;
+    transition: color 150ms ease;
+}
+
+expander > title:hover {
+    color: #ffffff;
+}
+
+.right-parameter-sidebar textview {
+    background-color: #121212;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 6px;
+    padding: 6px;
+    color: #e0e0e0;
+    font-size: 12px;
+}
+
+.right-parameter-sidebar scale {
+    margin-top: 4px;
+    margin-bottom: 8px;
+}
+
+.right-parameter-sidebar spinbutton {
+    background-color: #121212;
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 6px;
+}
+
+/* ===========================================================================
+   Settings Page & Widgets
+   =========================================================================== */
+.settings-page-container {
+    background-color: #0f1013;
+}
+
+/* Glassmorphic settings group cards */
+.interactive-widgets-frame {
+    background-color: #16171d !important;
+    border: 1px solid rgba(255, 255, 255, 0.04) !important;
+    border-radius: 12px !important;
+    padding: 20px !important;
+    margin-bottom: 20px !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15) !important;
+}
+
+.interactive-widgets-frame label {
+    font-family: "Inter", "system-ui", "sans-serif";
+    color: #9ca3af !important;
+    font-weight: 500;
+    font-size: 13.5px;
+}
+
+/* Clearer inputs */
+.interactive-widgets-frame entry {
+    background-color: var(--bg-card) !important;
+    border: 1px solid var(--border-subtle) !important;
+    border-radius: 6px !important;
+    color: var(--text-primary) !important;
+    padding: 8px 12px !important;
+    font-size: 13.5px;
+    box-shadow: none !important;
+}
+
+.interactive-widgets-frame entry:focus {
+    border-color: var(--accent) !important;
+    background-color: var(--bg-base) !important;
+}
+
+/* Flat, modern combobox */
+.interactive-widgets-frame comboboxtext button,
+.interactive-widgets-frame combobox button {
+    background-color: var(--bg-card) !important;
+    border: 1px solid var(--border-subtle) !important;
+    border-radius: 6px !important;
+    color: var(--text-primary) !important;
+    padding: 8px 12px !important;
+    font-size: 13.5px !important;
+    box-shadow: none !important;
+}
+
+/* Switches & Sliders styling */
+.interactive-widgets-frame switch {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 14px;
+    border: none;
+}
+
+.interactive-widgets-frame switch:checked {
+    background-color: #818cf8;
+}
+
+.interactive-widgets-frame scale highlight {
+    background-color: #818cf8;
+}
+
+.interactive-widgets-frame scale slider {
+    background-color: #ffffff;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    border-radius: 50%;
+    min-width: 16px;
+    min-height: 16px;
+}
+
+/* Save configuration button */
+button.suggested-action {
+    background: linear-gradient(135deg, #3584e4, #ab55b3) !important;
+    color: #ffffff !important;
+    border: none !important;
+    border-radius: 8px !important;
+    padding: 10px 24px !important;
+    font-weight: 600 !important;
+    box-shadow: 0 4px 12px rgba(53, 132, 228, 0.2) !important;
+    transition: all 200ms ease;
+}
+
+button.suggested-action:hover {
+    box-shadow: 0 6px 16px rgba(53, 132, 228, 0.35) !important;
+    filter: brightness(1.1);
+}
+
+/* Model management action buttons styling */
+.interactive-widgets-frame button {
+    background-color: rgba(255, 255, 255, 0.05) !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    border-radius: 6px !important;
+    padding: 6px 14px !important;
+    color: #ffffff !important;
+    font-size: 12.5px !important;
+    font-weight: 500 !important;
+    box-shadow: none !important;
+    transition: all 150ms ease;
+}
+
+.interactive-widgets-frame button:hover {
+    background-color: rgba(255, 255, 255, 0.09) !important;
+}
+
+.interactive-widgets-frame button.suggested-action {
+    background: linear-gradient(135deg, #3584e4, #ab55b3) !important;
+    border: none !important;
+}
+
+/* ===========================================================================
+   Minimalist Design Improvements
+   =========================================================================== */
+
+/* 1. Focus Mode (Zen Mode) */
+.app-container.focus-mode .main-content {
+    background-color: var(--bg-base);
+}
+.app-container.focus-mode .message-viewport {
+    max-width: 820px;
+    margin: 0 auto;
+    width: 100%;
+}
+.app-container.focus-mode .chat-footer {
+    max-width: 820px;
+    margin: 0 auto;
+    width: 100%;
+    padding-left: 0;
+    padding-right: 0;
+}
+
+/* 2. Auto-Hiding Input Actions (Contextual Footer) */
+.chat-input-card .input-actions {
+    opacity: 0.2;
+    transition: opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.chat-input-card:hover .input-actions,
+.chat-input-card:focus-within .input-actions {
+    opacity: 1;
+}
+
+/* 5. Skeleton Loading State for Model Compilation */
+.model-loading-skeleton {
+    animation: skeleton-pulse 1.5s infinite ease-in-out;
+}
+.skeleton-line {
+    background: rgba(255, 255, 255, 0.04);
+    border-radius: 4px;
+    margin-bottom: 8px;
+}
+:root[data-theme="light"] .skeleton-line {
+    background: rgba(0, 0, 0, 0.05);
+}
+@keyframes skeleton-pulse {
+    0%, 100% { opacity: 0.35; }
+    50% { opacity: 0.85; }
+}
+
+/* 7. Ghost Buttons & Monochromatic Iconography */
+.msg-controls button.pill {
+    background: transparent !important;
+    border: 1px solid var(--border-subtle) !important;
+    color: var(--text-dim) !important;
+    transition: all 0.15s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 11px !important;
+    padding: 3px 8px !important;
+    font-weight: 500 !important;
+    box-shadow: none !important;
+}
+.msg-controls button.pill:hover {
+    color: var(--text-primary) !important;
+    border-color: var(--border-hover) !important;
+    background: rgba(255, 255, 255, 0.03) !important;
+}
+.msg-controls button.pill svg {
+    opacity: 0.6;
+    transition: opacity 0.15s ease;
+}
+.msg-controls button.pill:hover svg {
+    opacity: 1.0;
+}
+
+/* Floating Toolbar Animation */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(4px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+

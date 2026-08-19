@@ -1,0 +1,2004 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GnomeAI Studio API Reference</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=JetBrains+Mono&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0d0f14;
+            --sidebar-bg: #131722;
+            --card-bg: rgba(22, 28, 45, 0.4);
+            --border-color: rgba(255, 255, 255, 0.08);
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --accent-color: #4f46e5;
+            
+            --get-color: #10b981;
+            --post-color: #3b82f6;
+            --delete-color: #ef4444;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+        
+        /* Sidebar layout */
+        .sidebar {
+            width: 320px;
+            background-color: var(--sidebar-bg);
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+        
+        .sidebar-header {
+            padding: 24px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .sidebar-header h1 {
+            font-size: 20px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #a5b4fc, #818cf8, #6366f1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .sidebar-menu {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+        }
+        
+        .sidebar-item {
+            display: flex;
+            align-items: center;
+            padding: 10px 12px;
+            border-radius: 8px;
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-size: 13px;
+            font-family: 'JetBrains Mono', monospace;
+            margin-bottom: 4px;
+            transition: all 0.2s ease;
+        }
+        
+        .sidebar-item:hover {
+            background-color: rgba(255, 255, 255, 0.03);
+            color: var(--text-primary);
+        }
+        
+        .badge {
+            font-size: 10px;
+            font-weight: 800;
+            padding: 4px 6px;
+            border-radius: 4px;
+            margin-right: 10px;
+            min-width: 55px;
+            text-align: center;
+        }
+        
+        .badge-get { background-color: rgba(16, 185, 129, 0.15); color: var(--get-color); border: 1px solid rgba(16, 185, 129, 0.3); }
+        .badge-post { background-color: rgba(59, 130, 246, 0.15); color: var(--post-color); border: 1px solid rgba(59, 130, 246, 0.3); }
+        .badge-delete { background-color: rgba(239, 68, 68, 0.15); color: var(--delete-color); border: 1px solid rgba(239, 68, 68, 0.3); }
+        
+        /* Content area */
+        .content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 48px;
+            scroll-behavior: smooth;
+        }
+        
+        .content-header {
+            margin-bottom: 48px;
+        }
+        
+        .content-header h2 {
+            font-size: 32px;
+            font-weight: 800;
+            margin-bottom: 8px;
+        }
+        
+        .content-header p {
+            color: var(--text-secondary);
+            font-size: 16px;
+        }
+        
+        .api-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 32px;
+            margin-bottom: 32px;
+            backdrop-filter: blur(12px);
+            transition: transform 0.2s ease, border-color 0.2s ease;
+        }
+        
+        .api-card:hover {
+            border-color: rgba(99, 102, 241, 0.2);
+        }
+        
+        .card-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+        
+        .card-path {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 18px;
+            font-weight: 600;
+        }
+        
+        .card-summary {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+        
+        .card-desc {
+            color: var(--text-secondary);
+            font-size: 14px;
+            margin-bottom: 24px;
+        }
+        
+        .section-title {
+            font-size: 12px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-secondary);
+            margin: 24px 0 12px 0;
+            border-left: 2px solid var(--accent-color);
+            padding-left: 8px;
+        }
+        
+        .params-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 24px;
+        }
+        
+        .params-table th, .params-table td {
+            text-align: left;
+            padding: 12px;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 14px;
+        }
+        
+        .params-table th {
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+        
+        .params-table td code {
+            font-family: 'JetBrains Mono', monospace;
+            background-color: rgba(255, 255, 255, 0.05);
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: #f43f5e;
+        }
+        
+        pre {
+            background-color: #080a0f;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 16px;
+            overflow-x: auto;
+            margin-bottom: 24px;
+        }
+        
+        code {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            color: #e2e8f0;
+        }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h1>GnomeAI Studio API</h1>
+        </div>
+        <div class="sidebar-menu">
+            
+        <a href="#ep_0" class="sidebar-item">
+            <span class="badge badge-post">POST</span>
+            <span class="path">/api/chat/stream</span>
+        </a>
+        
+        <a href="#ep_1" class="sidebar-item">
+            <span class="badge badge-post">POST</span>
+            <span class="path">/api/code/agent/resume</span>
+        </a>
+        
+        <a href="#ep_2" class="sidebar-item">
+            <span class="badge badge-post">POST</span>
+            <span class="path">/api/code/diff/apply</span>
+        </a>
+        
+        <a href="#ep_3" class="sidebar-item">
+            <span class="badge badge-post">POST</span>
+            <span class="path">/api/code/diff/discard</span>
+        </a>
+        
+        <a href="#ep_4" class="sidebar-item">
+            <span class="badge badge-post">POST</span>
+            <span class="path">/api/code/open</span>
+        </a>
+        
+        <a href="#ep_5" class="sidebar-item">
+            <span class="badge badge-get">GET</span>
+            <span class="path">/api/code/tree</span>
+        </a>
+        
+        <a href="#ep_6" class="sidebar-item">
+            <span class="badge badge-post">POST</span>
+            <span class="path">/api/custom_voice/generate</span>
+        </a>
+        
+        <a href="#ep_7" class="sidebar-item">
+            <span class="badge badge-get">GET</span>
+            <span class="path">/api/custom_voices</span>
+        </a>
+        
+        <a href="#ep_8" class="sidebar-item">
+            <span class="badge badge-get">GET</span>
+            <span class="path">/api/custom_voices/audio/{name}</span>
+        </a>
+        
+        <a href="#ep_9" class="sidebar-item">
+            <span class="badge badge-post">POST</span>
+            <span class="path">/api/custom_voices/save</span>
+        </a>
+        
+        <a href="#ep_10" class="sidebar-item">
+            <span class="badge badge-delete">DELETE</span>
+            <span class="path">/api/custom_voices/{name}</span>
+        </a>
+        
+        <a href="#ep_11" class="sidebar-item">
+            <span class="badge badge-post">POST</span>
+            <span class="path">/api/image/enhance_prompt</span>
+        </a>
+        
+        <a href="#ep_12" class="sidebar-item">
+            <span class="badge badge-get">GET</span>
+            <span class="path">/api/image/file/{filename}</span>
+        </a>
+        
+        <a href="#ep_13" class="sidebar-item">
+            <span class="badge badge-get">GET</span>
+            <span class="path">/api/image/gallery</span>
+        </a>
+        
+        <a href="#ep_14" class="sidebar-item">
+            <span class="badge badge-delete">DELETE</span>
+            <span class="path">/api/image/gallery/{filename}</span>
+        </a>
+        
+        <a href="#ep_15" class="sidebar-item">
+            <span class="badge badge-post">POST</span>
+            <span class="path">/api/image/generate</span>
+        </a>
+        
+        <a href="#ep_16" class="sidebar-item">
+            <span class="badge badge-get">GET</span>
+            <span class="path">/api/image/status/{job_id}</span>
+        </a>
+        
+        <a href="#ep_17" class="sidebar-item">
+            <span class="badge badge-get">GET</span>
+            <span class="path">/api/jobs/status/{job_id}</span>
+        </a>
+        
+        <a href="#ep_18" class="sidebar-item">
+            <span class="badge badge-get">GET</span>
+            <span class="path">/api/learnings</span>
+        </a>
+        
+        <a href="#ep_19" class="sidebar-item">
+            <span class="badge badge-post">POST</span>
+            <span class="path">/api/learnings</span>
+        </a>
+        
+        <a href="#ep_20" class="sidebar-item">
+            <span class="badge badge-get">GET</span>
+            <span class="path">/api/logs</span>
+        </a>
+        
+        <a href="#ep_21" class="sidebar-item">
+            <span class="badge badge-get">GET</span>
+            <span class="path">/api/models/image</span>
+        </a>
+        
+        <a href="#ep_22" class="sidebar-item">
+            <span class="badge badge-get">GET</span>
+            <span class="path">/api/models/image/available</span>
+        </a>
+        
+        <a href="#ep_23" class="sidebar-item">
+            <span class="badge badge-delete">DELETE</span>
+            <span class="path">/api/models/image/{id}</span>
+        </a>
+        
+        <a href="#ep_24" class="sidebar-item">
+            <span class="badge badge-post">POST</span>
+            <span class="path">/api/models/image/{id}/clear_pytorch</span>
+        </a>
+        
+        <a href="#ep_25" class="sidebar-item">
+            <span class="badge badge-post">POST</span>
+            <span class="path">/api/models/image/{id}/download</span>
+        </a>
+        
+        <a href="#ep_26" class="sidebar-item">
+            <span class="badge badge-post">POST</span>
+            <span class="path">/api/models/image/{id}/load</span>
+        </a>
+        
+        <a href="#ep_27" class="sidebar-item">
+            <span class="badge badge-post">POST</span>
+            <span class="path">/api/models/image/{id}/unload</span>
+        </a>
+        
+        <a href="#ep_28" class="sidebar-item">
+            <span class="badge badge-post">POST</span>
+            <span class="path">/api/models/import</span>
+        </a>
+        
+        <a href="#ep_29" class="sidebar-item">
+            <span class="badge badge-get">GET</span>
+            <span class="path">/api/models/llm</span>
+        </a>
+        
+        <a href="#ep_30" class="sidebar-item">
+            <span class="badge badge-get">GET</span>
+            <span class="path">/api/models/llm/available</span>
+        </a>
+        
+        <a href="#ep_31" class="sidebar-item">
+            <span class="badge badge-get">GET</span>
+            <span class="path">/api/models/llm/logs/compile</span>
+        </a>
+        
+        <a href="#ep_32" class="sidebar-item">
+            <span class="badge badge-get">GET</span>
+            <span class="path">/api/models/llm/logs/load</span>
+        </a>
+        
+        <a href="#ep_33" class="sidebar-item">
+            <span class="badge badge-delete">DELETE</span>
+            <span class="path">/api/models/llm/{id}</span>
+        </a>
+        
+        <a href="#ep_34" class="sidebar-item">
+            <span class="badge badge-post">POST</span>
+            <span class="path">/api/models/llm/{id}/compile</span>
+        </a>
+        
+        <a href="#ep_35" class="sidebar-item">
+            <span class="badge badge-post">POST</span>
+            <span class="path">/api/models/llm/{id}/load</span>
+        </a>
+        
+        <a href="#ep_36" class="sidebar-item">
+            <span class="badge badge-post">POST</span>
+            <span class="path">/api/models/llm/{id}/unload</span>
+        </a>
+        
+        <a href="#ep_37" class="sidebar-item">
+            <span class="badge badge-get">GET</span>
+            <span class="path">/api/models/voice</span>
+        </a>
+        
+        <a href="#ep_38" class="sidebar-item">
+            <span class="badge badge-get">GET</span>
+            <span class="path">/api/models/voice/available</span>
+        </a>
+        
+        <a href="#ep_39" class="sidebar-item">
+            <span class="badge badge-delete">DELETE</span>
+            <span class="path">/api/models/voice/{id}</span>
+        </a>
+        
+        <a href="#ep_40" class="sidebar-item">
+            <span class="badge badge-post">POST</span>
+            <span class="path">/api/models/voice/{id}/download</span>
+        </a>
+        
+        <a href="#ep_41" class="sidebar-item">
+            <span class="badge badge-post">POST</span>
+            <span class="path">/api/models/voice/{id}/load</span>
+        </a>
+        
+        <a href="#ep_42" class="sidebar-item">
+            <span class="badge badge-post">POST</span>
+            <span class="path">/api/models/voice/{id}/unload</span>
+        </a>
+        
+        <a href="#ep_43" class="sidebar-item">
+            <span class="badge badge-get">GET</span>
+            <span class="path">/api/presets</span>
+        </a>
+        
+        <a href="#ep_44" class="sidebar-item">
+            <span class="badge badge-post">POST</span>
+            <span class="path">/api/presets</span>
+        </a>
+        
+        <a href="#ep_45" class="sidebar-item">
+            <span class="badge badge-get">GET</span>
+            <span class="path">/api/recordings</span>
+        </a>
+        
+        <a href="#ep_46" class="sidebar-item">
+            <span class="badge badge-delete">DELETE</span>
+            <span class="path">/api/recordings/{rec_id}</span>
+        </a>
+        
+        <a href="#ep_47" class="sidebar-item">
+            <span class="badge badge-get">GET</span>
+            <span class="path">/api/recordings/{rec_id}/wav</span>
+        </a>
+        
+        <a href="#ep_48" class="sidebar-item">
+            <span class="badge badge-get">GET</span>
+            <span class="path">/api/sessions</span>
+        </a>
+        
+        <a href="#ep_49" class="sidebar-item">
+            <span class="badge badge-post">POST</span>
+            <span class="path">/api/sessions</span>
+        </a>
+        
+        <a href="#ep_50" class="sidebar-item">
+            <span class="badge badge-post">POST</span>
+            <span class="path">/api/sessions/auth</span>
+        </a>
+        
+        <a href="#ep_51" class="sidebar-item">
+            <span class="badge badge-post">POST</span>
+            <span class="path">/api/sessions/fork</span>
+        </a>
+        
+        <a href="#ep_52" class="sidebar-item">
+            <span class="badge badge-post">POST</span>
+            <span class="path">/api/sessions/learn</span>
+        </a>
+        
+        <a href="#ep_53" class="sidebar-item">
+            <span class="badge badge-post">POST</span>
+            <span class="path">/api/sessions/rename</span>
+        </a>
+        
+        <a href="#ep_54" class="sidebar-item">
+            <span class="badge badge-post">POST</span>
+            <span class="path">/api/sessions/summarize</span>
+        </a>
+        
+        <a href="#ep_55" class="sidebar-item">
+            <span class="badge badge-post">POST</span>
+            <span class="path">/api/sessions/update_mode</span>
+        </a>
+        
+        <a href="#ep_56" class="sidebar-item">
+            <span class="badge badge-get">GET</span>
+            <span class="path">/api/sessions/{session_id}</span>
+        </a>
+        
+        <a href="#ep_57" class="sidebar-item">
+            <span class="badge badge-delete">DELETE</span>
+            <span class="path">/api/sessions/{session_id}</span>
+        </a>
+        
+        <a href="#ep_58" class="sidebar-item">
+            <span class="badge badge-get">GET</span>
+            <span class="path">/api/sessions/{session_id}/context_size</span>
+        </a>
+        
+        <a href="#ep_59" class="sidebar-item">
+            <span class="badge badge-delete">DELETE</span>
+            <span class="path">/api/sessions/{session_id}/messages/{message_index}</span>
+        </a>
+        
+        <a href="#ep_60" class="sidebar-item">
+            <span class="badge badge-get">GET</span>
+            <span class="path">/api/settings</span>
+        </a>
+        
+        <a href="#ep_61" class="sidebar-item">
+            <span class="badge badge-post">POST</span>
+            <span class="path">/api/settings</span>
+        </a>
+        
+        <a href="#ep_62" class="sidebar-item">
+            <span class="badge badge-get">GET</span>
+            <span class="path">/api/skills</span>
+        </a>
+        
+        <a href="#ep_63" class="sidebar-item">
+            <span class="badge badge-post">POST</span>
+            <span class="path">/api/skills/save</span>
+        </a>
+        
+        <a href="#ep_64" class="sidebar-item">
+            <span class="badge badge-delete">DELETE</span>
+            <span class="path">/api/skills/{id}</span>
+        </a>
+        
+        <a href="#ep_65" class="sidebar-item">
+            <span class="badge badge-get">GET</span>
+            <span class="path">/api/status</span>
+        </a>
+        
+        <a href="#ep_66" class="sidebar-item">
+            <span class="badge badge-get">GET</span>
+            <span class="path">/api/system/specs</span>
+        </a>
+        
+        <a href="#ep_67" class="sidebar-item">
+            <span class="badge badge-post">POST</span>
+            <span class="path">/api/tts</span>
+        </a>
+        
+        <a href="#ep_68" class="sidebar-item">
+            <span class="badge badge-post">POST</span>
+            <span class="path">/api/tts/stop</span>
+        </a>
+        
+        <a href="#ep_69" class="sidebar-item">
+            <span class="badge badge-get">GET</span>
+            <span class="path">/api/tts/voices</span>
+        </a>
+        
+        <a href="#ep_70" class="sidebar-item">
+            <span class="badge badge-post">POST</span>
+            <span class="path">/api/voice_clone/generate</span>
+        </a>
+        
+        <a href="#ep_71" class="sidebar-item">
+            <span class="badge badge-post">POST</span>
+            <span class="path">/api/voice_design/generate</span>
+        </a>
+        
+        <a href="#ep_72" class="sidebar-item">
+            <span class="badge badge-get">GET</span>
+            <span class="path">/health</span>
+        </a>
+        
+        </div>
+    </div>
+    
+    <div class="content">
+        <div class="content-header">
+            <h2>API Endpoints Reference</h2>
+            <p>Runs locally on <code>http://localhost:8095</code></p>
+        </div>
+        
+        
+        <div class="api-card" id="ep_0">
+            <div class="card-header">
+                <span class="badge badge-post">POST</span>
+                <span class="card-path">/api/chat/stream</span>
+            </div>
+            <div class="card-summary">Chat Stream</div>
+            
+            
+            
+            <div class="section-title">Request Body (JSON Schema)</div>
+            <pre><code class="language-json">{
+  "session_id": "string",
+  "message": "string",
+  "mode": "string",
+  "last_script": "string"
+}</code></pre>
+            
+            <div class="section-title">Example Request</div>
+            <pre><code class="language-bash">curl -X POST "http://localhost:8095/api/chat/stream" \
+  -H "Content-Type: application/json" \
+  -d '{
+      "session_id": "string",
+      "message": "string",
+      "mode": "string",
+      "last_script": "string"
+    }'</code></pre>
+        </div>
+        
+        <div class="api-card" id="ep_1">
+            <div class="card-header">
+                <span class="badge badge-post">POST</span>
+                <span class="card-path">/api/code/agent/resume</span>
+            </div>
+            <div class="card-summary">Code Agent Resume</div>
+            
+            
+            
+            <div class="section-title">Example Request</div>
+            <pre><code class="language-bash">curl -X POST "http://localhost:8095/api/code/agent/resume"</code></pre>
+        </div>
+        
+        <div class="api-card" id="ep_2">
+            <div class="card-header">
+                <span class="badge badge-post">POST</span>
+                <span class="card-path">/api/code/diff/apply</span>
+            </div>
+            <div class="card-summary">Code Diff Apply</div>
+            
+            
+            
+            <div class="section-title">Example Request</div>
+            <pre><code class="language-bash">curl -X POST "http://localhost:8095/api/code/diff/apply"</code></pre>
+        </div>
+        
+        <div class="api-card" id="ep_3">
+            <div class="card-header">
+                <span class="badge badge-post">POST</span>
+                <span class="card-path">/api/code/diff/discard</span>
+            </div>
+            <div class="card-summary">Code Diff Discard</div>
+            
+            
+            
+            <div class="section-title">Example Request</div>
+            <pre><code class="language-bash">curl -X POST "http://localhost:8095/api/code/diff/discard"</code></pre>
+        </div>
+        
+        <div class="api-card" id="ep_4">
+            <div class="card-header">
+                <span class="badge badge-post">POST</span>
+                <span class="card-path">/api/code/open</span>
+            </div>
+            <div class="card-summary">Code Open</div>
+            
+            
+            
+            <div class="section-title">Request Body (JSON Schema)</div>
+            <pre><code class="language-json">{
+  "path": "string"
+}</code></pre>
+            
+            <div class="section-title">Example Request</div>
+            <pre><code class="language-bash">curl -X POST "http://localhost:8095/api/code/open" \
+  -H "Content-Type: application/json" \
+  -d '{
+      "path": "string"
+    }'</code></pre>
+        </div>
+        
+        <div class="api-card" id="ep_5">
+            <div class="card-header">
+                <span class="badge badge-get">GET</span>
+                <span class="card-path">/api/code/tree</span>
+            </div>
+            <div class="card-summary">Code Tree</div>
+            
+            
+            
+            <div class="section-title">Example Request</div>
+            <pre><code class="language-bash">curl -X GET "http://localhost:8095/api/code/tree"</code></pre>
+        </div>
+        
+        <div class="api-card" id="ep_6">
+            <div class="card-header">
+                <span class="badge badge-post">POST</span>
+                <span class="card-path">/api/custom_voice/generate</span>
+            </div>
+            <div class="card-summary">Custom Voice Generate</div>
+            
+            
+            
+            <div class="section-title">Request Body (JSON Schema)</div>
+            <pre><code class="language-json">{
+  "text": "string",
+  "language": "string",
+  "speaker": "string",
+  "instruct": "string",
+  "model_size": "string",
+  "engine": "string"
+}</code></pre>
+            
+            <div class="section-title">Example Request</div>
+            <pre><code class="language-bash">curl -X POST "http://localhost:8095/api/custom_voice/generate" \
+  -H "Content-Type: application/json" \
+  -d '{
+      "text": "string",
+      "language": "string",
+      "speaker": "string",
+      "instruct": "string",
+      "model_size": "string",
+      "engine": "string"
+    }'</code></pre>
+        </div>
+        
+        <div class="api-card" id="ep_7">
+            <div class="card-header">
+                <span class="badge badge-get">GET</span>
+                <span class="card-path">/api/custom_voices</span>
+            </div>
+            <div class="card-summary">Get Custom Voices</div>
+            
+            
+            
+            <div class="section-title">Example Request</div>
+            <pre><code class="language-bash">curl -X GET "http://localhost:8095/api/custom_voices"</code></pre>
+        </div>
+        
+        <div class="api-card" id="ep_8">
+            <div class="card-header">
+                <span class="badge badge-get">GET</span>
+                <span class="card-path">/api/custom_voices/audio/{name}</span>
+            </div>
+            <div class="card-summary">Get Custom Voice Audio</div>
+            
+            
+            <div class="section-title">Path Parameters</div>
+            <table class="params-table">
+                <thead><tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr></thead>
+                <tbody><tr><td><code>name</code></td><td>string</td><td>Yes</td><td></td></tr></tbody>
+            </table>
+            
+            
+            <div class="section-title">Example Request</div>
+            <pre><code class="language-bash">curl -X GET "http://localhost:8095/api/custom_voices/audio/{name}"</code></pre>
+        </div>
+        
+        <div class="api-card" id="ep_9">
+            <div class="card-header">
+                <span class="badge badge-post">POST</span>
+                <span class="card-path">/api/custom_voices/save</span>
+            </div>
+            <div class="card-summary">Save Custom Voice</div>
+            
+            
+            
+            <div class="section-title">Request Body (Multipart Form-Data)</div>
+            <table class="params-table">
+                <thead><tr><th>Field</th><th>Type</th><th>Description</th></tr></thead>
+                <tbody><tr><td><code>name</code></td><td>string</td><td>Multipart Form Field</td></tr><tr><td><code>type</code></td><td>string</td><td>Multipart Form Field</td></tr><tr><td><code>file</code></td><td>string</td><td>Multipart Form Field</td></tr><tr><td><code>ref_text</code></td><td>string</td><td>Multipart Form Field</td></tr><tr><td><code>x_vector_only</code></td><td>string</td><td>Multipart Form Field</td></tr><tr><td><code>description</code></td><td>string</td><td>Multipart Form Field</td></tr><tr><td><code>speaker</code></td><td>string</td><td>Multipart Form Field</td></tr></tbody>
+            </table>
+            
+            <div class="section-title">Example Request</div>
+            <pre><code class="language-bash">curl -X POST "http://localhost:8095/api/custom_voices/save" \
+  -F "name=<string>" \
+  -F "type=<string>" \
+  -F "file=@/path/to/file" \
+  -F "ref_text=<string>" \
+  -F "x_vector_only=<string>" \
+  -F "description=<string>" \
+  -F "speaker=<string>"</code></pre>
+        </div>
+        
+        <div class="api-card" id="ep_10">
+            <div class="card-header">
+                <span class="badge badge-delete">DELETE</span>
+                <span class="card-path">/api/custom_voices/{name}</span>
+            </div>
+            <div class="card-summary">Delete Custom Voice</div>
+            
+            
+            <div class="section-title">Path Parameters</div>
+            <table class="params-table">
+                <thead><tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr></thead>
+                <tbody><tr><td><code>name</code></td><td>string</td><td>Yes</td><td></td></tr></tbody>
+            </table>
+            
+            
+            <div class="section-title">Example Request</div>
+            <pre><code class="language-bash">curl -X DELETE "http://localhost:8095/api/custom_voices/{name}"</code></pre>
+        </div>
+        
+        <div class="api-card" id="ep_11">
+            <div class="card-header">
+                <span class="badge badge-post">POST</span>
+                <span class="card-path">/api/image/enhance_prompt</span>
+            </div>
+            <div class="card-summary">Api Enhance Image Prompt</div>
+            
+            
+            
+            <div class="section-title">Request Body (JSON Schema)</div>
+            <pre><code class="language-json">{
+  "prompt": "string"
+}</code></pre>
+            
+            <div class="section-title">Example Request</div>
+            <pre><code class="language-bash">curl -X POST "http://localhost:8095/api/image/enhance_prompt" \
+  -H "Content-Type: application/json" \
+  -d '{
+      "prompt": "string"
+    }'</code></pre>
+        </div>
+        
+        <div class="api-card" id="ep_12">
+            <div class="card-header">
+                <span class="badge badge-get">GET</span>
+                <span class="card-path">/api/image/file/{filename}</span>
+            </div>
+            <div class="card-summary">Get Image File</div>
+            
+            
+            <div class="section-title">Path Parameters</div>
+            <table class="params-table">
+                <thead><tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr></thead>
+                <tbody><tr><td><code>filename</code></td><td>string</td><td>Yes</td><td></td></tr></tbody>
+            </table>
+            
+            
+            <div class="section-title">Example Request</div>
+            <pre><code class="language-bash">curl -X GET "http://localhost:8095/api/image/file/{filename}"</code></pre>
+        </div>
+        
+        <div class="api-card" id="ep_13">
+            <div class="card-header">
+                <span class="badge badge-get">GET</span>
+                <span class="card-path">/api/image/gallery</span>
+            </div>
+            <div class="card-summary">Get Image Gallery</div>
+            
+            
+            
+            <div class="section-title">Example Request</div>
+            <pre><code class="language-bash">curl -X GET "http://localhost:8095/api/image/gallery"</code></pre>
+        </div>
+        
+        <div class="api-card" id="ep_14">
+            <div class="card-header">
+                <span class="badge badge-delete">DELETE</span>
+                <span class="card-path">/api/image/gallery/{filename}</span>
+            </div>
+            <div class="card-summary">Delete Gallery Image</div>
+            
+            
+            <div class="section-title">Path Parameters</div>
+            <table class="params-table">
+                <thead><tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr></thead>
+                <tbody><tr><td><code>filename</code></td><td>string</td><td>Yes</td><td></td></tr></tbody>
+            </table>
+            
+            
+            <div class="section-title">Example Request</div>
+            <pre><code class="language-bash">curl -X DELETE "http://localhost:8095/api/image/gallery/{filename}"</code></pre>
+        </div>
+        
+        <div class="api-card" id="ep_15">
+            <div class="card-header">
+                <span class="badge badge-post">POST</span>
+                <span class="card-path">/api/image/generate</span>
+            </div>
+            <div class="card-summary">Image Generate</div>
+            
+            
+            
+            <div class="section-title">Request Body (Multipart Form-Data)</div>
+            <table class="params-table">
+                <thead><tr><th>Field</th><th>Type</th><th>Description</th></tr></thead>
+                <tbody><tr><td><code>file</code></td><td>string</td><td>Multipart Form Field</td></tr><tr><td><code>prompt</code></td><td>string</td><td>Multipart Form Field</td></tr><tr><td><code>enhance_prompt</code></td><td>string</td><td>Multipart Form Field</td></tr><tr><td><code>width</code></td><td>integer</td><td>Multipart Form Field</td></tr><tr><td><code>height</code></td><td>integer</td><td>Multipart Form Field</td></tr><tr><td><code>steps</code></td><td>integer</td><td>Multipart Form Field</td></tr><tr><td><code>strength</code></td><td>number</td><td>Multipart Form Field</td></tr><tr><td><code>model_id</code></td><td>string</td><td>Multipart Form Field</td></tr></tbody>
+            </table>
+            
+            <div class="section-title">Example Request</div>
+            <pre><code class="language-bash">curl -X POST "http://localhost:8095/api/image/generate" \
+  -F "file=@/path/to/file" \
+  -F "prompt=<string>" \
+  -F "enhance_prompt=<string>" \
+  -F "width=<integer>" \
+  -F "height=<integer>" \
+  -F "steps=<integer>" \
+  -F "strength=<number>" \
+  -F "model_id=<string>"</code></pre>
+        </div>
+        
+        <div class="api-card" id="ep_16">
+            <div class="card-header">
+                <span class="badge badge-get">GET</span>
+                <span class="card-path">/api/image/status/{job_id}</span>
+            </div>
+            <div class="card-summary">Get Image Status</div>
+            
+            
+            <div class="section-title">Path Parameters</div>
+            <table class="params-table">
+                <thead><tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr></thead>
+                <tbody><tr><td><code>job_id</code></td><td>string</td><td>Yes</td><td></td></tr></tbody>
+            </table>
+            
+            
+            <div class="section-title">Example Request</div>
+            <pre><code class="language-bash">curl -X GET "http://localhost:8095/api/image/status/{job_id}"</code></pre>
+        </div>
+        
+        <div class="api-card" id="ep_17">
+            <div class="card-header">
+                <span class="badge badge-get">GET</span>
+                <span class="card-path">/api/jobs/status/{job_id}</span>
+            </div>
+            <div class="card-summary">Get Job Status</div>
+            
+            
+            <div class="section-title">Path Parameters</div>
+            <table class="params-table">
+                <thead><tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr></thead>
+                <tbody><tr><td><code>job_id</code></td><td>string</td><td>Yes</td><td></td></tr></tbody>
+            </table>
+            
+            
+            <div class="section-title">Example Request</div>
+            <pre><code class="language-bash">curl -X GET "http://localhost:8095/api/jobs/status/{job_id}"</code></pre>
+        </div>
+        
+        <div class="api-card" id="ep_18">
+            <div class="card-header">
+                <span class="badge badge-get">GET</span>
+                <span class="card-path">/api/learnings</span>
+            </div>
+            <div class="card-summary">Get Learnings</div>
+            
+            
+            
+            <div class="section-title">Example Request</div>
+            <pre><code class="language-bash">curl -X GET "http://localhost:8095/api/learnings"</code></pre>
+        </div>
+        
+        <div class="api-card" id="ep_19">
+            <div class="card-header">
+                <span class="badge badge-post">POST</span>
+                <span class="card-path">/api/learnings</span>
+            </div>
+            <div class="card-summary">Post Learnings</div>
+            
+            
+            
+            <div class="section-title">Request Body (JSON Schema)</div>
+            <pre><code class="language-json">object</code></pre>
+            
+            <div class="section-title">Example Request</div>
+            <pre><code class="language-bash">curl -X POST "http://localhost:8095/api/learnings" \
+  -H "Content-Type: application/json" \
+  -d 'object'</code></pre>
+        </div>
+        
+        <div class="api-card" id="ep_20">
+            <div class="card-header">
+                <span class="badge badge-get">GET</span>
+                <span class="card-path">/api/logs</span>
+            </div>
+            <div class="card-summary">Get Logs</div>
+            
+            
+            <div class="section-title">Query Parameters</div>
+            <table class="params-table">
+                <thead><tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr></thead>
+                <tbody><tr><td><code>lines</code></td><td>integer</td><td>No</td><td></td></tr></tbody>
+            </table>
+            
+            
+            <div class="section-title">Example Request</div>
+            <pre><code class="language-bash">curl -X GET "http://localhost:8095/api/logs"</code></pre>
+        </div>
+        
+        <div class="api-card" id="ep_21">
+            <div class="card-header">
+                <span class="badge badge-get">GET</span>
+                <span class="card-path">/api/models/image</span>
+            </div>
+            <div class="card-summary">Get Models Image Status</div>
+            
+            
+            
+            <div class="section-title">Example Request</div>
+            <pre><code class="language-bash">curl -X GET "http://localhost:8095/api/models/image"</code></pre>
+        </div>
+        
+        <div class="api-card" id="ep_22">
+            <div class="card-header">
+                <span class="badge badge-get">GET</span>
+                <span class="card-path">/api/models/image/available</span>
+            </div>
+            <div class="card-summary">Get Models Image Available</div>
+            
+            
+            
+            <div class="section-title">Example Request</div>
+            <pre><code class="language-bash">curl -X GET "http://localhost:8095/api/models/image/available"</code></pre>
+        </div>
+        
+        <div class="api-card" id="ep_23">
+            <div class="card-header">
+                <span class="badge badge-delete">DELETE</span>
+                <span class="card-path">/api/models/image/{id}</span>
+            </div>
+            <div class="card-summary">Delete Image Model Unified</div>
+            
+            
+            <div class="section-title">Path Parameters</div>
+            <table class="params-table">
+                <thead><tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr></thead>
+                <tbody><tr><td><code>id</code></td><td>string</td><td>Yes</td><td></td></tr></tbody>
+            </table>
+            
+            
+            <div class="section-title">Example Request</div>
+            <pre><code class="language-bash">curl -X DELETE "http://localhost:8095/api/models/image/{id}"</code></pre>
+        </div>
+        
+        <div class="api-card" id="ep_24">
+            <div class="card-header">
+                <span class="badge badge-post">POST</span>
+                <span class="card-path">/api/models/image/{id}/clear_pytorch</span>
+            </div>
+            <div class="card-summary">Clear Image Model Pytorch</div>
+            
+            
+            <div class="section-title">Path Parameters</div>
+            <table class="params-table">
+                <thead><tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr></thead>
+                <tbody><tr><td><code>id</code></td><td>string</td><td>Yes</td><td></td></tr></tbody>
+            </table>
+            
+            
+            <div class="section-title">Example Request</div>
+            <pre><code class="language-bash">curl -X POST "http://localhost:8095/api/models/image/{id}/clear_pytorch"</code></pre>
+        </div>
+        
+        <div class="api-card" id="ep_25">
+            <div class="card-header">
+                <span class="badge badge-post">POST</span>
+                <span class="card-path">/api/models/image/{id}/download</span>
+            </div>
+            <div class="card-summary">Download Image Model Unified</div>
+            
+            
+            <div class="section-title">Path Parameters</div>
+            <table class="params-table">
+                <thead><tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr></thead>
+                <tbody><tr><td><code>id</code></td><td>string</td><td>Yes</td><td></td></tr></tbody>
+            </table>
+            
+            
+            <div class="section-title">Example Request</div>
+            <pre><code class="language-bash">curl -X POST "http://localhost:8095/api/models/image/{id}/download"</code></pre>
+        </div>
+        
+        <div class="api-card" id="ep_26">
+            <div class="card-header">
+                <span class="badge badge-post">POST</span>
+                <span class="card-path">/api/models/image/{id}/load</span>
+            </div>
+            <div class="card-summary">Load Image Model Unified</div>
+            
+            
+            <div class="section-title">Path Parameters</div>
+            <table class="params-table">
+                <thead><tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr></thead>
+                <tbody><tr><td><code>id</code></td><td>string</td><td>Yes</td><td></td></tr></tbody>
+            </table>
+            
+            
+            <div class="section-title">Example Request</div>
+            <pre><code class="language-bash">curl -X POST "http://localhost:8095/api/models/image/{id}/load"</code></pre>
+        </div>
+        
+        <div class="api-card" id="ep_27">
+            <div class="card-header">
+                <span class="badge badge-post">POST</span>
+                <span class="card-path">/api/models/image/{id}/unload</span>
+            </div>
+            <div class="card-summary">Unload Image Model Unified</div>
+            
+            
+            <div class="section-title">Path Parameters</div>
+            <table class="params-table">
+                <thead><tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr></thead>
+                <tbody><tr><td><code>id</code></td><td>string</td><td>Yes</td><td></td></tr></tbody>
+            </table>
+            
+            
+            <div class="section-title">Example Request</div>
+            <pre><code class="language-bash">curl -X POST "http://localhost:8095/api/models/image/{id}/unload"</code></pre>
+        </div>
+        
+        <div class="api-card" id="ep_28">
+            <div class="card-header">
+                <span class="badge badge-post">POST</span>
+                <span class="card-path">/api/models/import</span>
+            </div>
+            <div class="card-summary">Import Gguf Model</div>
+            
+            
+            
+            <div class="section-title">Request Body (JSON Schema)</div>
+            <pre><code class="language-json">{
+  "filepath": "string"
+}</code></pre>
+            
+            <div class="section-title">Example Request</div>
+            <pre><code class="language-bash">curl -X POST "http://localhost:8095/api/models/import" \
+  -H "Content-Type: application/json" \
+  -d '{
+      "filepath": "string"
+    }'</code></pre>
+        </div>
+        
+        <div class="api-card" id="ep_29">
+            <div class="card-header">
+                <span class="badge badge-get">GET</span>
+                <span class="card-path">/api/models/llm</span>
+            </div>
+            <div class="card-summary">Get Models Llm Status</div>
+            
+            
+            
+            <div class="section-title">Example Request</div>
+            <pre><code class="language-bash">curl -X GET "http://localhost:8095/api/models/llm"</code></pre>
+        </div>
+        
+        <div class="api-card" id="ep_30">
+            <div class="card-header">
+                <span class="badge badge-get">GET</span>
+                <span class="card-path">/api/models/llm/available</span>
+            </div>
+            <div class="card-summary">Get Models Llm Available</div>
+            
+            
+            
+            <div class="section-title">Example Request</div>
+            <pre><code class="language-bash">curl -X GET "http://localhost:8095/api/models/llm/available"</code></pre>
+        </div>
+        
+        <div class="api-card" id="ep_31">
+            <div class="card-header">
+                <span class="badge badge-get">GET</span>
+                <span class="card-path">/api/models/llm/logs/compile</span>
+            </div>
+            <div class="card-summary">Get Compile Log</div>
+            
+            
+            
+            <div class="section-title">Example Request</div>
+            <pre><code class="language-bash">curl -X GET "http://localhost:8095/api/models/llm/logs/compile"</code></pre>
+        </div>
+        
+        <div class="api-card" id="ep_32">
+            <div class="card-header">
+                <span class="badge badge-get">GET</span>
+                <span class="card-path">/api/models/llm/logs/load</span>
+            </div>
+            <div class="card-summary">Get Load Log</div>
+            
+            
+            
+            <div class="section-title">Example Request</div>
+            <pre><code class="language-bash">curl -X GET "http://localhost:8095/api/models/llm/logs/load"</code></pre>
+        </div>
+        
+        <div class="api-card" id="ep_33">
+            <div class="card-header">
+                <span class="badge badge-delete">DELETE</span>
+                <span class="card-path">/api/models/llm/{id}</span>
+            </div>
+            <div class="card-summary">Delete Llm Model Unified</div>
+            
+            
+            <div class="section-title">Path Parameters</div>
+            <table class="params-table">
+                <thead><tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr></thead>
+                <tbody><tr><td><code>id</code></td><td>string</td><td>Yes</td><td></td></tr></tbody>
+            </table>
+            
+            
+            <div class="section-title">Example Request</div>
+            <pre><code class="language-bash">curl -X DELETE "http://localhost:8095/api/models/llm/{id}"</code></pre>
+        </div>
+        
+        <div class="api-card" id="ep_34">
+            <div class="card-header">
+                <span class="badge badge-post">POST</span>
+                <span class="card-path">/api/models/llm/{id}/compile</span>
+            </div>
+            <div class="card-summary">Compile Llm Model Unified</div>
+            
+            
+            <div class="section-title">Path Parameters</div>
+            <table class="params-table">
+                <thead><tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr></thead>
+                <tbody><tr><td><code>id</code></td><td>string</td><td>Yes</td><td></td></tr></tbody>
+            </table>
+            
+            
+            <div class="section-title">Request Body (JSON Schema)</div>
+            <pre><code class="language-json">{
+  "precision": "string"
+}</code></pre>
+            
+            <div class="section-title">Example Request</div>
+            <pre><code class="language-bash">curl -X POST "http://localhost:8095/api/models/llm/{id}/compile" \
+  -H "Content-Type: application/json" \
+  -d '{
+      "precision": "string"
+    }'</code></pre>
+        </div>
+        
+        <div class="api-card" id="ep_35">
+            <div class="card-header">
+                <span class="badge badge-post">POST</span>
+                <span class="card-path">/api/models/llm/{id}/load</span>
+            </div>
+            <div class="card-summary">Load Llm Model Unified</div>
+            
+            
+            <div class="section-title">Path Parameters</div>
+            <table class="params-table">
+                <thead><tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr></thead>
+                <tbody><tr><td><code>id</code></td><td>string</td><td>Yes</td><td></td></tr></tbody>
+            </table>
+            
+            
+            <div class="section-title">Request Body (JSON Schema)</div>
+            <pre><code class="language-json">object</code></pre>
+            
+            <div class="section-title">Example Request</div>
+            <pre><code class="language-bash">curl -X POST "http://localhost:8095/api/models/llm/{id}/load" \
+  -H "Content-Type: application/json" \
+  -d 'object'</code></pre>
+        </div>
+        
+        <div class="api-card" id="ep_36">
+            <div class="card-header">
+                <span class="badge badge-post">POST</span>
+                <span class="card-path">/api/models/llm/{id}/unload</span>
+            </div>
+            <div class="card-summary">Unload Llm Model Unified</div>
+            
+            
+            <div class="section-title">Path Parameters</div>
+            <table class="params-table">
+                <thead><tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr></thead>
+                <tbody><tr><td><code>id</code></td><td>string</td><td>Yes</td><td></td></tr></tbody>
+            </table>
+            
+            
+            <div class="section-title">Request Body (JSON Schema)</div>
+            <pre><code class="language-json">object</code></pre>
+            
+            <div class="section-title">Example Request</div>
+            <pre><code class="language-bash">curl -X POST "http://localhost:8095/api/models/llm/{id}/unload" \
+  -H "Content-Type: application/json" \
+  -d 'object'</code></pre>
+        </div>
+        
+        <div class="api-card" id="ep_37">
+            <div class="card-header">
+                <span class="badge badge-get">GET</span>
+                <span class="card-path">/api/models/voice</span>
+            </div>
+            <div class="card-summary">Get Models Voice Status</div>
+            
+            
+            
+            <div class="section-title">Example Request</div>
+            <pre><code class="language-bash">curl -X GET "http://localhost:8095/api/models/voice"</code></pre>
+        </div>
+        
+        <div class="api-card" id="ep_38">
+            <div class="card-header">
+                <span class="badge badge-get">GET</span>
+                <span class="card-path">/api/models/voice/available</span>
+            </div>
+            <div class="card-summary">Get Models Voice Available</div>
+            
+            
+            
+            <div class="section-title">Example Request</div>
+            <pre><code class="language-bash">curl -X GET "http://localhost:8095/api/models/voice/available"</code></pre>
+        </div>
+        
+        <div class="api-card" id="ep_39">
+            <div class="card-header">
+                <span class="badge badge-delete">DELETE</span>
+                <span class="card-path">/api/models/voice/{id}</span>
+            </div>
+            <div class="card-summary">Delete Voice Model Unified</div>
+            
+            
+            <div class="section-title">Path Parameters</div>
+            <table class="params-table">
+                <thead><tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr></thead>
+                <tbody><tr><td><code>id</code></td><td>string</td><td>Yes</td><td></td></tr></tbody>
+            </table>
+            
+            
+            <div class="section-title">Example Request</div>
+            <pre><code class="language-bash">curl -X DELETE "http://localhost:8095/api/models/voice/{id}"</code></pre>
+        </div>
+        
+        <div class="api-card" id="ep_40">
+            <div class="card-header">
+                <span class="badge badge-post">POST</span>
+                <span class="card-path">/api/models/voice/{id}/download</span>
+            </div>
+            <div class="card-summary">Download Voice Model Unified</div>
+            
+            
+            <div class="section-title">Path Parameters</div>
+            <table class="params-table">
+                <thead><tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr></thead>
+                <tbody><tr><td><code>id</code></td><td>string</td><td>Yes</td><td></td></tr></tbody>
+            </table>
+            
+            
+            <div class="section-title">Example Request</div>
+            <pre><code class="language-bash">curl -X POST "http://localhost:8095/api/models/voice/{id}/download"</code></pre>
+        </div>
+        
+        <div class="api-card" id="ep_41">
+            <div class="card-header">
+                <span class="badge badge-post">POST</span>
+                <span class="card-path">/api/models/voice/{id}/load</span>
+            </div>
+            <div class="card-summary">Load Voice Model Unified</div>
+            
+            
+            <div class="section-title">Path Parameters</div>
+            <table class="params-table">
+                <thead><tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr></thead>
+                <tbody><tr><td><code>id</code></td><td>string</td><td>Yes</td><td></td></tr></tbody>
+            </table>
+            
+            
+            <div class="section-title">Example Request</div>
+            <pre><code class="language-bash">curl -X POST "http://localhost:8095/api/models/voice/{id}/load"</code></pre>
+        </div>
+        
+        <div class="api-card" id="ep_42">
+            <div class="card-header">
+                <span class="badge badge-post">POST</span>
+                <span class="card-path">/api/models/voice/{id}/unload</span>
+            </div>
+            <div class="card-summary">Unload Voice Model Unified</div>
+            
+            
+            <div class="section-title">Path Parameters</div>
+            <table class="params-table">
+                <thead><tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr></thead>
+                <tbody><tr><td><code>id</code></td><td>string</td><td>Yes</td><td></td></tr></tbody>
+            </table>
+            
+            
+            <div class="section-title">Example Request</div>
+            <pre><code class="language-bash">curl -X POST "http://localhost:8095/api/models/voice/{id}/unload"</code></pre>
+        </div>
+        
+        <div class="api-card" id="ep_43">
+            <div class="card-header">
+                <span class="badge badge-get">GET</span>
+                <span class="card-path">/api/presets</span>
+            </div>
+            <div class="card-summary">Get Presets</div>
+            
+            
+            
+            <div class="section-title">Example Request</div>
+            <pre><code class="language-bash">curl -X GET "http://localhost:8095/api/presets"</code></pre>
+        </div>
+        
+        <div class="api-card" id="ep_44">
+            <div class="card-header">
+                <span class="badge badge-post">POST</span>
+                <span class="card-path">/api/presets</span>
+            </div>
+            <div class="card-summary">Post Presets</div>
+            
+            
+            
+            <div class="section-title">Request Body (JSON Schema)</div>
+            <pre><code class="language-json">object</code></pre>
+            
+            <div class="section-title">Example Request</div>
+            <pre><code class="language-bash">curl -X POST "http://localhost:8095/api/presets" \
+  -H "Content-Type: application/json" \
+  -d 'object'</code></pre>
+        </div>
+        
+        <div class="api-card" id="ep_45">
+            <div class="card-header">
+                <span class="badge badge-get">GET</span>
+                <span class="card-path">/api/recordings</span>
+            </div>
+            <div class="card-summary">Get Recordings</div>
+            
+            
+            
+            <div class="section-title">Example Request</div>
+            <pre><code class="language-bash">curl -X GET "http://localhost:8095/api/recordings"</code></pre>
+        </div>
+        
+        <div class="api-card" id="ep_46">
+            <div class="card-header">
+                <span class="badge badge-delete">DELETE</span>
+                <span class="card-path">/api/recordings/{rec_id}</span>
+            </div>
+            <div class="card-summary">Delete Recording</div>
+            
+            
+            <div class="section-title">Path Parameters</div>
+            <table class="params-table">
+                <thead><tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr></thead>
+                <tbody><tr><td><code>rec_id</code></td><td>string</td><td>Yes</td><td></td></tr></tbody>
+            </table>
+            
+            
+            <div class="section-title">Example Request</div>
+            <pre><code class="language-bash">curl -X DELETE "http://localhost:8095/api/recordings/{rec_id}"</code></pre>
+        </div>
+        
+        <div class="api-card" id="ep_47">
+            <div class="card-header">
+                <span class="badge badge-get">GET</span>
+                <span class="card-path">/api/recordings/{rec_id}/wav</span>
+            </div>
+            <div class="card-summary">Get Recording Wav</div>
+            
+            
+            <div class="section-title">Path Parameters</div>
+            <table class="params-table">
+                <thead><tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr></thead>
+                <tbody><tr><td><code>rec_id</code></td><td>string</td><td>Yes</td><td></td></tr></tbody>
+            </table>
+            
+            
+            <div class="section-title">Example Request</div>
+            <pre><code class="language-bash">curl -X GET "http://localhost:8095/api/recordings/{rec_id}/wav"</code></pre>
+        </div>
+        
+        <div class="api-card" id="ep_48">
+            <div class="card-header">
+                <span class="badge badge-get">GET</span>
+                <span class="card-path">/api/sessions</span>
+            </div>
+            <div class="card-summary">Get Sessions</div>
+            
+            
+            
+            <div class="section-title">Example Request</div>
+            <pre><code class="language-bash">curl -X GET "http://localhost:8095/api/sessions"</code></pre>
+        </div>
+        
+        <div class="api-card" id="ep_49">
+            <div class="card-header">
+                <span class="badge badge-post">POST</span>
+                <span class="card-path">/api/sessions</span>
+            </div>
+            <div class="card-summary">Post Sessions</div>
+            
+            
+            
+            <div class="section-title">Request Body (JSON Schema)</div>
+            <pre><code class="language-json">object</code></pre>
+            
+            <div class="section-title">Example Request</div>
+            <pre><code class="language-bash">curl -X POST "http://localhost:8095/api/sessions" \
+  -H "Content-Type: application/json" \
+  -d 'object'</code></pre>
+        </div>
+        
+        <div class="api-card" id="ep_50">
+            <div class="card-header">
+                <span class="badge badge-post">POST</span>
+                <span class="card-path">/api/sessions/auth</span>
+            </div>
+            <div class="card-summary">Post Sessions Auth</div>
+            
+            
+            
+            <div class="section-title">Request Body (JSON Schema)</div>
+            <pre><code class="language-json">{
+  "session_id": "string",
+  "approved": "boolean",
+  "code": "string"
+}</code></pre>
+            
+            <div class="section-title">Example Request</div>
+            <pre><code class="language-bash">curl -X POST "http://localhost:8095/api/sessions/auth" \
+  -H "Content-Type: application/json" \
+  -d '{
+      "session_id": "string",
+      "approved": "boolean",
+      "code": "string"
+    }'</code></pre>
+        </div>
+        
+        <div class="api-card" id="ep_51">
+            <div class="card-header">
+                <span class="badge badge-post">POST</span>
+                <span class="card-path">/api/sessions/fork</span>
+            </div>
+            <div class="card-summary">Post Sessions Fork</div>
+            
+            
+            
+            <div class="section-title">Request Body (JSON Schema)</div>
+            <pre><code class="language-json">{
+  "session_id": "string"
+}</code></pre>
+            
+            <div class="section-title">Example Request</div>
+            <pre><code class="language-bash">curl -X POST "http://localhost:8095/api/sessions/fork" \
+  -H "Content-Type: application/json" \
+  -d '{
+      "session_id": "string"
+    }'</code></pre>
+        </div>
+        
+        <div class="api-card" id="ep_52">
+            <div class="card-header">
+                <span class="badge badge-post">POST</span>
+                <span class="card-path">/api/sessions/learn</span>
+            </div>
+            <div class="card-summary">Post Sessions Learn</div>
+            
+            
+            
+            <div class="section-title">Request Body (JSON Schema)</div>
+            <pre><code class="language-json">{
+  "session_id": "string"
+}</code></pre>
+            
+            <div class="section-title">Example Request</div>
+            <pre><code class="language-bash">curl -X POST "http://localhost:8095/api/sessions/learn" \
+  -H "Content-Type: application/json" \
+  -d '{
+      "session_id": "string"
+    }'</code></pre>
+        </div>
+        
+        <div class="api-card" id="ep_53">
+            <div class="card-header">
+                <span class="badge badge-post">POST</span>
+                <span class="card-path">/api/sessions/rename</span>
+            </div>
+            <div class="card-summary">Post Sessions Rename</div>
+            
+            
+            
+            <div class="section-title">Request Body (JSON Schema)</div>
+            <pre><code class="language-json">{
+  "session_id": "string",
+  "title": "string"
+}</code></pre>
+            
+            <div class="section-title">Example Request</div>
+            <pre><code class="language-bash">curl -X POST "http://localhost:8095/api/sessions/rename" \
+  -H "Content-Type: application/json" \
+  -d '{
+      "session_id": "string",
+      "title": "string"
+    }'</code></pre>
+        </div>
+        
+        <div class="api-card" id="ep_54">
+            <div class="card-header">
+                <span class="badge badge-post">POST</span>
+                <span class="card-path">/api/sessions/summarize</span>
+            </div>
+            <div class="card-summary">Post Sessions Summarize</div>
+            
+            
+            
+            <div class="section-title">Request Body (JSON Schema)</div>
+            <pre><code class="language-json">{
+  "session_id": "string"
+}</code></pre>
+            
+            <div class="section-title">Example Request</div>
+            <pre><code class="language-bash">curl -X POST "http://localhost:8095/api/sessions/summarize" \
+  -H "Content-Type: application/json" \
+  -d '{
+      "session_id": "string"
+    }'</code></pre>
+        </div>
+        
+        <div class="api-card" id="ep_55">
+            <div class="card-header">
+                <span class="badge badge-post">POST</span>
+                <span class="card-path">/api/sessions/update_mode</span>
+            </div>
+            <div class="card-summary">Post Session Mode</div>
+            
+            
+            
+            <div class="section-title">Request Body (JSON Schema)</div>
+            <pre><code class="language-json">{
+  "session_id": "string",
+  "mode": "string"
+}</code></pre>
+            
+            <div class="section-title">Example Request</div>
+            <pre><code class="language-bash">curl -X POST "http://localhost:8095/api/sessions/update_mode" \
+  -H "Content-Type: application/json" \
+  -d '{
+      "session_id": "string",
+      "mode": "string"
+    }'</code></pre>
+        </div>
+        
+        <div class="api-card" id="ep_56">
+            <div class="card-header">
+                <span class="badge badge-get">GET</span>
+                <span class="card-path">/api/sessions/{session_id}</span>
+            </div>
+            <div class="card-summary">Get Session By Id</div>
+            
+            
+            <div class="section-title">Path Parameters</div>
+            <table class="params-table">
+                <thead><tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr></thead>
+                <tbody><tr><td><code>session_id</code></td><td>string</td><td>Yes</td><td></td></tr></tbody>
+            </table>
+            
+            
+            <div class="section-title">Example Request</div>
+            <pre><code class="language-bash">curl -X GET "http://localhost:8095/api/sessions/{session_id}"</code></pre>
+        </div>
+        
+        <div class="api-card" id="ep_57">
+            <div class="card-header">
+                <span class="badge badge-delete">DELETE</span>
+                <span class="card-path">/api/sessions/{session_id}</span>
+            </div>
+            <div class="card-summary">Delete Session</div>
+            
+            
+            <div class="section-title">Path Parameters</div>
+            <table class="params-table">
+                <thead><tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr></thead>
+                <tbody><tr><td><code>session_id</code></td><td>string</td><td>Yes</td><td></td></tr></tbody>
+            </table>
+            
+            
+            <div class="section-title">Example Request</div>
+            <pre><code class="language-bash">curl -X DELETE "http://localhost:8095/api/sessions/{session_id}"</code></pre>
+        </div>
+        
+        <div class="api-card" id="ep_58">
+            <div class="card-header">
+                <span class="badge badge-get">GET</span>
+                <span class="card-path">/api/sessions/{session_id}/context_size</span>
+            </div>
+            <div class="card-summary">Get Session Context Size</div>
+            
+            
+            <div class="section-title">Path Parameters</div>
+            <table class="params-table">
+                <thead><tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr></thead>
+                <tbody><tr><td><code>session_id</code></td><td>string</td><td>Yes</td><td></td></tr></tbody>
+            </table>
+            
+            
+            <div class="section-title">Example Request</div>
+            <pre><code class="language-bash">curl -X GET "http://localhost:8095/api/sessions/{session_id}/context_size"</code></pre>
+        </div>
+        
+        <div class="api-card" id="ep_59">
+            <div class="card-header">
+                <span class="badge badge-delete">DELETE</span>
+                <span class="card-path">/api/sessions/{session_id}/messages/{message_index}</span>
+            </div>
+            <div class="card-summary">Delete Message</div>
+            
+            
+            <div class="section-title">Path Parameters</div>
+            <table class="params-table">
+                <thead><tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr></thead>
+                <tbody><tr><td><code>session_id</code></td><td>string</td><td>Yes</td><td></td></tr><tr><td><code>message_index</code></td><td>integer</td><td>Yes</td><td></td></tr></tbody>
+            </table>
+            
+            
+            <div class="section-title">Example Request</div>
+            <pre><code class="language-bash">curl -X DELETE "http://localhost:8095/api/sessions/{session_id}/messages/{message_index}"</code></pre>
+        </div>
+        
+        <div class="api-card" id="ep_60">
+            <div class="card-header">
+                <span class="badge badge-get">GET</span>
+                <span class="card-path">/api/settings</span>
+            </div>
+            <div class="card-summary">Get Settings</div>
+            
+            
+            
+            <div class="section-title">Example Request</div>
+            <pre><code class="language-bash">curl -X GET "http://localhost:8095/api/settings"</code></pre>
+        </div>
+        
+        <div class="api-card" id="ep_61">
+            <div class="card-header">
+                <span class="badge badge-post">POST</span>
+                <span class="card-path">/api/settings</span>
+            </div>
+            <div class="card-summary">Post Settings</div>
+            
+            
+            
+            <div class="section-title">Request Body (JSON Schema)</div>
+            <pre><code class="language-json">{
+  "lm_studio_url": "string",
+  "model_name": "string",
+  "inbuilt_model_id": "string",
+  "inbuilt_device": "string",
+  "tts_speed": "number",
+  "enable_dbus_monitor": "boolean",
+  "enable_tts": "boolean",
+  "llm_backend": "string",
+  "system_prompt": "string",
+  "temperature": "number",
+  "cpu_threads": "integer",
+  "top_k": "integer",
+  "top_p": "number",
+  "min_p": "number",
+  "active_preset": "string",
+  "tts_voice": "string",
+  "expand_thoughts": "boolean",
+  "flash_attention": "boolean",
+  "context_limit": "integer"
+}</code></pre>
+            
+            <div class="section-title">Example Request</div>
+            <pre><code class="language-bash">curl -X POST "http://localhost:8095/api/settings" \
+  -H "Content-Type: application/json" \
+  -d '{
+      "lm_studio_url": "string",
+      "model_name": "string",
+      "inbuilt_model_id": "string",
+      "inbuilt_device": "string",
+      "tts_speed": "number",
+      "enable_dbus_monitor": "boolean",
+      "enable_tts": "boolean",
+      "llm_backend": "string",
+      "system_prompt": "string",
+      "temperature": "number",
+      "cpu_threads": "integer",
+      "top_k": "integer",
+      "top_p": "number",
+      "min_p": "number",
+      "active_preset": "string",
+      "tts_voice": "string",
+      "expand_thoughts": "boolean",
+      "flash_attention": "boolean",
+      "context_limit": "integer"
+    }'</code></pre>
+        </div>
+        
+        <div class="api-card" id="ep_62">
+            <div class="card-header">
+                <span class="badge badge-get">GET</span>
+                <span class="card-path">/api/skills</span>
+            </div>
+            <div class="card-summary">Get Skills</div>
+            
+            
+            
+            <div class="section-title">Example Request</div>
+            <pre><code class="language-bash">curl -X GET "http://localhost:8095/api/skills"</code></pre>
+        </div>
+        
+        <div class="api-card" id="ep_63">
+            <div class="card-header">
+                <span class="badge badge-post">POST</span>
+                <span class="card-path">/api/skills/save</span>
+            </div>
+            <div class="card-summary">Save Skill Code</div>
+            
+            
+            
+            <div class="section-title">Request Body (JSON Schema)</div>
+            <pre><code class="language-json">{
+  "id": "string",
+  "code": "string"
+}</code></pre>
+            
+            <div class="section-title">Example Request</div>
+            <pre><code class="language-bash">curl -X POST "http://localhost:8095/api/skills/save" \
+  -H "Content-Type: application/json" \
+  -d '{
+      "id": "string",
+      "code": "string"
+    }'</code></pre>
+        </div>
+        
+        <div class="api-card" id="ep_64">
+            <div class="card-header">
+                <span class="badge badge-delete">DELETE</span>
+                <span class="card-path">/api/skills/{id}</span>
+            </div>
+            <div class="card-summary">Delete Skill</div>
+            
+            
+            <div class="section-title">Path Parameters</div>
+            <table class="params-table">
+                <thead><tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr></thead>
+                <tbody><tr><td><code>id</code></td><td>string</td><td>Yes</td><td></td></tr></tbody>
+            </table>
+            
+            
+            <div class="section-title">Example Request</div>
+            <pre><code class="language-bash">curl -X DELETE "http://localhost:8095/api/skills/{id}"</code></pre>
+        </div>
+        
+        <div class="api-card" id="ep_65">
+            <div class="card-header">
+                <span class="badge badge-get">GET</span>
+                <span class="card-path">/api/status</span>
+            </div>
+            <div class="card-summary">Get Status</div>
+            
+            
+            
+            <div class="section-title">Example Request</div>
+            <pre><code class="language-bash">curl -X GET "http://localhost:8095/api/status"</code></pre>
+        </div>
+        
+        <div class="api-card" id="ep_66">
+            <div class="card-header">
+                <span class="badge badge-get">GET</span>
+                <span class="card-path">/api/system/specs</span>
+            </div>
+            <div class="card-summary">Get System Specs</div>
+            
+            
+            
+            <div class="section-title">Example Request</div>
+            <pre><code class="language-bash">curl -X GET "http://localhost:8095/api/system/specs"</code></pre>
+        </div>
+        
+        <div class="api-card" id="ep_67">
+            <div class="card-header">
+                <span class="badge badge-post">POST</span>
+                <span class="card-path">/api/tts</span>
+            </div>
+            <div class="card-summary">Post Tts</div>
+            
+            
+            
+            <div class="section-title">Request Body (JSON Schema)</div>
+            <pre><code class="language-json">{
+  "text": "string",
+  "voice": "string"
+}</code></pre>
+            
+            <div class="section-title">Example Request</div>
+            <pre><code class="language-bash">curl -X POST "http://localhost:8095/api/tts" \
+  -H "Content-Type: application/json" \
+  -d '{
+      "text": "string",
+      "voice": "string"
+    }'</code></pre>
+        </div>
+        
+        <div class="api-card" id="ep_68">
+            <div class="card-header">
+                <span class="badge badge-post">POST</span>
+                <span class="card-path">/api/tts/stop</span>
+            </div>
+            <div class="card-summary">Stop Tts</div>
+            
+            
+            
+            <div class="section-title">Example Request</div>
+            <pre><code class="language-bash">curl -X POST "http://localhost:8095/api/tts/stop"</code></pre>
+        </div>
+        
+        <div class="api-card" id="ep_69">
+            <div class="card-header">
+                <span class="badge badge-get">GET</span>
+                <span class="card-path">/api/tts/voices</span>
+            </div>
+            <div class="card-summary">Get Tts Voices</div>
+            
+            
+            
+            <div class="section-title">Example Request</div>
+            <pre><code class="language-bash">curl -X GET "http://localhost:8095/api/tts/voices"</code></pre>
+        </div>
+        
+        <div class="api-card" id="ep_70">
+            <div class="card-header">
+                <span class="badge badge-post">POST</span>
+                <span class="card-path">/api/voice_clone/generate</span>
+            </div>
+            <div class="card-summary">Voice Clone Generate</div>
+            
+            
+            
+            <div class="section-title">Request Body (Multipart Form-Data)</div>
+            <table class="params-table">
+                <thead><tr><th>Field</th><th>Type</th><th>Description</th></tr></thead>
+                <tbody><tr><td><code>file</code></td><td>string</td><td>Multipart Form Field</td></tr><tr><td><code>target_text</code></td><td>string</td><td>Multipart Form Field</td></tr><tr><td><code>ref_text</code></td><td>string</td><td>Multipart Form Field</td></tr><tr><td><code>use_xvector_only</code></td><td>string</td><td>Multipart Form Field</td></tr><tr><td><code>language</code></td><td>string</td><td>Multipart Form Field</td></tr><tr><td><code>model_size</code></td><td>string</td><td>Multipart Form Field</td></tr><tr><td><code>engine</code></td><td>string</td><td>Multipart Form Field</td></tr></tbody>
+            </table>
+            
+            <div class="section-title">Example Request</div>
+            <pre><code class="language-bash">curl -X POST "http://localhost:8095/api/voice_clone/generate" \
+  -F "file=@/path/to/file" \
+  -F "target_text=<string>" \
+  -F "ref_text=<string>" \
+  -F "use_xvector_only=<string>" \
+  -F "language=<string>" \
+  -F "model_size=<string>" \
+  -F "engine=<string>"</code></pre>
+        </div>
+        
+        <div class="api-card" id="ep_71">
+            <div class="card-header">
+                <span class="badge badge-post">POST</span>
+                <span class="card-path">/api/voice_design/generate</span>
+            </div>
+            <div class="card-summary">Voice Design Generate</div>
+            
+            
+            
+            <div class="section-title">Request Body (JSON Schema)</div>
+            <pre><code class="language-json">{
+  "text": "string",
+  "language": "string",
+  "instruct": "string",
+  "engine": "string"
+}</code></pre>
+            
+            <div class="section-title">Example Request</div>
+            <pre><code class="language-bash">curl -X POST "http://localhost:8095/api/voice_design/generate" \
+  -H "Content-Type: application/json" \
+  -d '{
+      "text": "string",
+      "language": "string",
+      "instruct": "string",
+      "engine": "string"
+    }'</code></pre>
+        </div>
+        
+        <div class="api-card" id="ep_72">
+            <div class="card-header">
+                <span class="badge badge-get">GET</span>
+                <span class="card-path">/health</span>
+            </div>
+            <div class="card-summary">Health Check</div>
+            
+            
+            
+            <div class="section-title">Example Request</div>
+            <pre><code class="language-bash">curl -X GET "http://localhost:8095/health"</code></pre>
+        </div>
+        
+    </div>
+</body>
+</html>
